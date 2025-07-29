@@ -6,12 +6,12 @@ from datetime import datetime
 app = FastAPI()
 
 # API Keys and Config (Hardcoded)
-GROQ_API_KEY = "your_groq_api_key_here"
+GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 WHATSAPP_API_URL = "https://graph.facebook.com/v22.0/715095305022325/messages"
-WHATSAPP_TOKEN = "your_whatsapp_token_here"
+WHATSAPP_TOKEN = "EAARtn5xSbEsBPDaNIAz2nhQyUwJ4cjMTtINcdy1o7IkLcLvuHFsMfk6ZBFpZAJAz5RL5Vz3lnWERTrdA4ZA2tZA85JLCwWAXsktLrSBm3KgacIHemDObEIj3gZBathVCVbvZAhbQ4TJseZAAs69Vnd9eZC2NGylC2tfpNMS4X9ATLF6jTCUfqSHmOUPrNZCvWkB5SSgZDZD"
 RECIPIENT_PHONE = "whatsapp:+923403553839" 
 
 class LocationData(BaseModel):
