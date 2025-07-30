@@ -81,19 +81,39 @@ async def send_telegram_message(body_text):
         print("Telegram API response:", response.json())
 
 # === Main Endpoint ===
-@app.post("/location")
-async def receive_location(location_data: LocationData):
-    print("Received location:", location_data)
-    distance = haversine(location_data.latitude, location_data.longitude, UNIVERSITY_LAT, UNIVERSITY_LON)
+from fastapi import Request
 
+@app.post("/location")
+async def receive_location(request: Request):
+    body = await request.json()
+    print("Raw incoming data:", body)
+
+    # === Detect Format ===
+    if "_type" in body and body["_type"] == "location":
+        # OwnTracks format
+        latitude = body.get("lat")
+        longitude = body.get("lon")
+        class_name = "AI"  # default value
+        arrival_time = get_current_time()
+    elif "latitude" in body and "longitude" in body:
+        # Custom format
+        latitude = body["latitude"]
+        longitude = body["longitude"]
+        class_name = body.get("class_name", "AI")
+        arrival_time = body.get("arrival_time") or get_current_time()
+    else:
+        return {"error": "Invalid format"}
+
+    # === Distance Check ===
+    distance = haversine(latitude, longitude, UNIVERSITY_LAT, UNIVERSITY_LON)
     if distance > MAX_DISTANCE_METERS:
         return {
             "status": "Not at university",
             "distance_m": round(distance, 2)
         }
 
-    arrival_time = location_data.arrival_time or get_current_time()
-    message_text = await generate_message(location_data.class_name, arrival_time)
+    # === Send Message ===
+    message_text = await generate_message(class_name, arrival_time)
     await send_telegram_message(message_text)
 
     return {
@@ -101,4 +121,5 @@ async def receive_location(location_data: LocationData):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
