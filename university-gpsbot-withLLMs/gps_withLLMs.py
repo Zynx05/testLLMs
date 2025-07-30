@@ -1,9 +1,11 @@
-
 import httpx
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
+from datetime import datetime, timedelta
+
+last_message_sent_time = None
 
 app = FastAPI()
 
@@ -85,18 +87,18 @@ from fastapi import Request
 
 @app.post("/location")
 async def receive_location(request: Request):
+    global last_message_sent_time
+
     body = await request.json()
     print("Raw incoming data:", body)
 
     # === Detect Format ===
     if "_type" in body and body["_type"] == "location":
-        # OwnTracks format
         latitude = body.get("lat")
         longitude = body.get("lon")
-        class_name = "AI"  # default value
+        class_name = "AI"
         arrival_time = get_current_time()
     elif "latitude" in body and "longitude" in body:
-        # Custom format
         latitude = body["latitude"]
         longitude = body["longitude"]
         class_name = body.get("class_name", "AI")
@@ -112,14 +114,24 @@ async def receive_location(request: Request):
             "distance_m": round(distance, 2)
         }
 
+    # === Spam Delay Check ===
+    now = datetime.now()
+    if last_message_sent_time and (now - last_message_sent_time) < timedelta(hours=6):
+        time_left = timedelta(hours=6) - (now - last_message_sent_time)
+        return {
+            "status": "Already notified",
+            "next_message_after": str(time_left).split(".")[0],  # remove microseconds
+            "distance_m": round(distance, 2)
+        }
+
     # === Send Message ===
     message_text = await generate_message(class_name, arrival_time)
     await send_telegram_message(message_text)
+    last_message_sent_time = now
 
     return {
         "status": "Message sent",
         "message": message_text,
         "distance_m": round(distance, 2)
     }
-
 
