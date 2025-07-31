@@ -10,7 +10,7 @@ last_message_sent_time = None
 app = FastAPI()
 
 # === Config ===
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
