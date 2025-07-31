@@ -106,7 +106,8 @@ async def receive_location(request: Request):
         class_name = "AI"         
         timestamp = body.get("tst")
         if timestamp:
-            dt = datetime.fromtimestamp(timestamp, tz=timezone.utc).astimezone()
+            pk_timezone = timezone(timedelta(hours=5))
+            dt = datetime.fromtimestamp(timestamp, tz=timezone.utc).astimezone(pk_timezone)
             arrival_time = dt.strftime("%I:%M %p")
         else:
             arrival_time = get_current_time()
