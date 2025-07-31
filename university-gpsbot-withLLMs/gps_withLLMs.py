@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
 from datetime import datetime, timedelta, timezone
-from datetime import datetime
 import pytz
 
 last_message_sent_time = None
