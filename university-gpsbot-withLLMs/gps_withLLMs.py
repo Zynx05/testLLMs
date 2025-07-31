@@ -55,8 +55,8 @@ async def generate_message(class_name, arrival_time):
             "model": "llama3-8b-8192",
             "messages": [
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Send a short sweet message to my mom telling her I reached university for {class_name} at around {arrival_time}, 20-25 words max, Start with Assalamualaikum"}
-            ]
+                {"role": "user",   "content": f"Write a short, sweet message (20-25 words) as if I am texting my mom, telling her I reached university for {class_name} around {arrival_time}. Start with 'Assalamualaikum'. Only reply with the message. No explanation or intro text."}
+           ]
         }
 
         async with httpx.AsyncClient(timeout=10) as client:
