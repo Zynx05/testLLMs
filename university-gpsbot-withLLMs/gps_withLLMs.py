@@ -14,12 +14,12 @@ GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8"  # Replace with your Bot Token
-CHAT_ID = "7297370967"  # Replace with your Telegram user ID or group ID
+TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8" 
+CHAT_ID = "7297370967"  
 
-# University Location
+# ubit coords
 UNIVERSITY_LAT, UNIVERSITY_LON = 24.94557432346588, 67.115382
-MAX_DISTANCE_METERS = 150  # Acceptable distance to trigger message
+MAX_DISTANCE_METERS = 150  
 
 # === Pydantic Model ===
 class LocationData(BaseModel):
@@ -40,35 +40,39 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c * 1000  # in meters
 
+import httpx
+
 async def generate_message(class_name, arrival_time):
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    prompt = (
-        f"Just tell my mom in a warm and informal tone that I've reached the university for my {class_name} class around {arrival_time}. "
-        f"Make it a short, sweet WhatsApp-style message under 280 characters."
-    )
-
-    payload = {
-        "model": GROQ_MODEL,
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.7
-    }
-
     try:
-        async with httpx.AsyncClient() as client:
+        GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+        GROQ_API_KEY = "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"  # Replace with environment variable in production
+
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "model": "llama3-8b-8192",
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Send a short sweet message to my mom telling her I reached university for {class_name} at around {arrival_time}, 20-25 words max, Start with Assalamualaikum"}
+            ]
+        }
+
+        async with httpx.AsyncClient(timeout=10) as client:
             response = await client.post(GROQ_API_URL, headers=headers, json=payload)
-            response.raise_for_status()  # 🔒 Add this for safety
+            response.raise_for_status()
             data = response.json()
             return data["choices"][0]["message"]["content"].strip()
+
+    except httpx.HTTPStatusError as e:
+        print("❌ HTTP error from GROQ:", e.response.text)
     except Exception as e:
-        print("LLM Error Response:", e)
-        return f"Hey Ammi, just reached uni for {class_name} around {arrival_time}! I'll talk to you later."
+        print("❌ General error from GROQ:", e)
+
+    # fallback default message
+    return f"AssalamuAlaikum Ammi, just reached uni for {class_name} around {arrival_time}! I'll talk to you later."
 
 
 async def send_telegram_message(body_text):
@@ -134,4 +138,3 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
-
