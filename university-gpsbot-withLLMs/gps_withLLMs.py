@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, timezone
 last_message_sent_time = None
 
 app = FastAPI()
@@ -14,12 +13,12 @@ GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8" 
-CHAT_ID = "7297370967"  
+TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8"  # Replace with your Bot Token
+CHAT_ID = "7297370967"  # Replace with your Telegram user ID or group ID
 
-# ubit coords
+# University Location
 UNIVERSITY_LAT, UNIVERSITY_LON = 24.94557432346588, 67.115382
-MAX_DISTANCE_METERS = 150  
+MAX_DISTANCE_METERS = 150  # Acceptable distance to trigger message
 
 # === Pydantic Model ===
 class LocationData(BaseModel):
@@ -71,8 +70,8 @@ async def generate_message(class_name, arrival_time):
     except Exception as e:
         print("❌ General error from GROQ:", e)
 
-    # fallback default message
-    return f"AssalamuAlaikum Ammi, just reached uni for {class_name} around {arrival_time}! I'll talk to you later."
+    # Fallback default message
+    return f"Hey Ammi, just reached uni for {class_name} around {arrival_time}! I'll talk to you later."
 
 
 async def send_telegram_message(body_text):
@@ -100,8 +99,14 @@ async def receive_location(request: Request):
     if "_type" in body and body["_type"] == "location":
         latitude = body.get("lat")
         longitude = body.get("lon")
-        class_name = "AI"
-        arrival_time = get_current_time()
+        class_name = "AI"         
+        timestamp = body.get("tst")
+        if timestamp:
+            dt = datetime.fromtimestamp(timestamp, tz=timezone.utc).astimezone()
+            arrival_time = dt.strftime("%I:%M %p")
+        else:
+            arrival_time = get_current_time()
+
     elif "latitude" in body and "longitude" in body:
         latitude = body["latitude"]
         longitude = body["longitude"]
