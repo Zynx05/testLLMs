@@ -5,7 +5,6 @@ from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
 from datetime import datetime, timedelta, timezone
 
-
 last_message_sent_time = None
 
 app = FastAPI()
