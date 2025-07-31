@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
 from datetime import datetime, timedelta, timezone
+import pytz
+
+
 last_message_sent_time = None
 
 app = FastAPI()
@@ -13,8 +16,8 @@ GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8"  # Replace with your Bot Token
-CHAT_ID = "7297370967"  # Replace with your Telegram user ID or group ID
+TELEGRAM_TOKEN = "8146080655:AAF7D7ZPc0hSnO1livD6VcChRfaVqFHO0i8" 
+CHAT_ID = "7297370967"  
 
 # University Location
 UNIVERSITY_LAT, UNIVERSITY_LON = 24.94557432346588, 67.115382
@@ -29,7 +32,8 @@ class LocationData(BaseModel):
 
 # === Utilities ===
 def get_current_time():
-    return datetime.now().strftime("%I:%M %p")
+    pk_tz = pytz.timezone("Asia/Karachi")
+    return datetime.now(pk_tz).strftime("%H:%M")
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371.0  # Earth radius in km
@@ -55,7 +59,7 @@ async def generate_message(class_name, arrival_time):
             "model": "llama3-8b-8192",
             "messages": [
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user",   "content": f"Write a short, sweet message (20-25 words) as if I am texting my mom, telling her I reached university for {class_name} around {arrival_time}. Start with 'Assalamualaikum'. Only reply with the message. No explanation or intro text."}
+                {"role": "user",   "content": f"Write a short, sweet message (20 words) as if I am texting my mom, telling her I reached university for {class_name} around {arrival_time}. Start with 'Assalamualaikum'. Only reply with the message. No explanation or intro text."}
            ]
         }
 
