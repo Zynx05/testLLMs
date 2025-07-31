@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
 from datetime import datetime, timedelta, timezone
+from datetime import datetime
+import pytz
 
 last_message_sent_time = None
 
@@ -30,9 +32,8 @@ class LocationData(BaseModel):
 
 # === Utilities ===
 def get_current_time():
-    utc_now = datetime.utcnow()
-    pk_time = utc_now + timedelta(hours=5)
-    return pk_time.strftime("%H:%M")
+    pk_tz = pytz.timezone("Asia/Karachi")
+    return datetime.now(pk_tz).strftime("%H:%M")
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371.0  # Earth radius in km
