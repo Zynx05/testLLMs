@@ -20,7 +20,7 @@ UNIVERSITY_LAT, UNIVERSITY_LON = 24.94557432346588, 67.115382
 MAX_DISTANCE_METERS = 150  # Acceptable distance to trigger message
 
 # Todays Classes
-now = datetime.datetime.now()
+now = datetime.now()
 day_name = now.strftime("%A")
 class_name = None
 timetable ={"Monday":"COAL","Tuesday":"OS","Wednesday":"DBMS","Thursday":"AI","Friday":"SDA and Civics"}
@@ -153,3 +153,4 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
