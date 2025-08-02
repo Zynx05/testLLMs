@@ -23,7 +23,7 @@ MAX_DISTANCE_METERS = 150  # Acceptable distance to trigger message
 now = datetime.now()
 day_name = now.strftime("%A")
 class_name = None
-timetable ={"Monday":"COAL","Tuesday":"OS","Wednesday":"DBMS","Thursday":"AI","Friday":"SDA and Civics"}
+timetable ={"Monday":"COAL","Tuesday":"OS","Wednesday":"DBMS","Thursday":"AI","Saturday":"SDA and Civics"}
 
 for day in timetable:
     if day == day_name:
@@ -152,6 +152,7 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
 
 
