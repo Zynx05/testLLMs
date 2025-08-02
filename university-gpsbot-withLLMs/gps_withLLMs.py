@@ -37,6 +37,17 @@ class LocationData(BaseModel):
     class_name: str
     arrival_time: str = None
 
+def get_today_class_name():
+    day_name = datetime.now().strftime("%A")
+    timetable = {
+        "Monday": "COAL",
+        "Tuesday": "OS",
+        "Wednesday": "DBMS",
+        "Thursday": "AI",
+        "Friday": "SDA and Civics"
+    }
+    return timetable.get(day_name, "Class")
+
 
 def get_current_time():
     utc_now = datetime.utcnow()
@@ -108,7 +119,7 @@ async def receive_location(request: Request):
     if "_type" in body and body["_type"] == "location":
         latitude = body.get("lat")
         longitude = body.get("lon")
-        class_name = class_name
+        class_name = get_today_class_name()
         timestamp = body.get("tst")
         if timestamp:
             pk_timezone = timezone(timedelta(hours=5))
@@ -120,7 +131,7 @@ async def receive_location(request: Request):
     elif "latitude" in body and "longitude" in body:
         latitude = body["latitude"]
         longitude = body["longitude"]
-        class_name = class_name
+        class_name = get_today_class_name()
         arrival_time = body.get("arrival_time") or get_current_time()
     else:
         return {"error": "Invalid format"}
@@ -153,4 +164,5 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
