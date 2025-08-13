@@ -9,7 +9,7 @@ last_message_sent_time = None
 
 app = FastAPI()
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -23,7 +23,7 @@ MAX_DISTANCE_METERS = 150  # Acceptable distance to trigger message
 now = datetime.now()
 day_name = now.strftime("%A")
 class_name = None
-timetable ={"Monday":"COAL","Tuesday":"OS","Wednesday":"DBMS","Thursday":"AI","Saturday":"SDA and Civics"}
+timetable ={"Monday":"COAL","Tuesday":"OS","Wednesday":"DBMS","Thursday":"AI","Friday":"SDA and Civics"}
 
 for day in timetable:
     if day == day_name:
@@ -152,6 +152,7 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
 
 
