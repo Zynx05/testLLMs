@@ -9,7 +9,7 @@ last_message_sent_time = None
 
 app = FastAPI()
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 GROQ_MODEL = "llama3-8b-8192"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -152,6 +152,7 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
 
 
