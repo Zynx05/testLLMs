@@ -1,7 +1,6 @@
 import httpx
 from fastapi import FastAPI
 from pydantic import BaseModel
-from datetime import datetime
 from math import radians, cos, sin, sqrt, atan2
 from datetime import datetime, timedelta, timezone
 
@@ -152,6 +151,7 @@ async def receive_location(request: Request):
         "message": message_text,
         "distance_m": round(distance, 2)
     }
+
 
 
 
